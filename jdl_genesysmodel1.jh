@@ -1,0 +1,178 @@
+
+// ======================== Table des Faits ========================
+
+// Productions réelle d'élèctricité (technologies)
+entity FactPowerProduction {
+    value Double required
+}
+// Relations de FactPowerProduction 
+relationship OneToOne {
+	Year to FactPowerProduction  {year}
+    Country to FactPowerProduction {country}
+    Technology to FactPowerProduction {technology}
+    Fuel to FactPowerProduction  {fuel}
+}
+
+
+// Consommation d'élècticité
+entity FactElectricityConsumption {
+    value Double required
+}
+// Relation de FactElectricityConsumption
+relationship OneToOne {
+	Year to  FactElectricityConsumption   {year}
+    Country to  FactElectricityConsumption  {country}
+}
+
+// potentiel renouvellable 
+entity FactRenewablePotential {
+    maxCapacity Double required
+    minCapacity Double required
+}
+// Relation de FactRenewablePotential
+relationship OneToOne {
+	Technology to  FactRenewablePotential  {technology}
+    Country to  FactRenewablePotential  {country}
+}
+
+// potentielle de la biomasse
+entity FactBiomassPotential {
+    maxCapacity Double required
+    minCapacity Double required
+}
+// Relation de FactRenewablePotential
+relationship OneToOne {
+	Technology to  FactBiomassPotential  {technology}
+    Country to  FactBiomassPotential  {country}
+}
+
+
+// coût d'echange d'energie
+entity FactTradCost{
+    fixedCost Double required
+    variableCost Double required 
+}
+// Relation de FactTradCost
+relationship OneToOne {
+	Fuel to  FactTradCost  {fuel}
+}
+
+
+// Capacité entre les pays (deux relation OneToOne vers le emme country) 
+entity FactTradeCapacity {
+    value Double required
+}
+// Relations de FactTradeCapacity 
+relationship OneToOne {
+	Year to FactTradeCapacity  {year}
+    Country to FactTradeCapacity {country1}
+    Country to FactTradeCapacity {country2}
+    Fuel to FactTradeCapacity {fuel}
+}
+
+
+// Transport
+entity FactTranspot {
+	value Double required
+    typeOfMobility ModalType required 
+}
+enum ModalType {
+	MOBILITY_PASSENGER_ROAD,
+    MOBILITY_PASSENGER_ROAD_CONV,
+    MOBILITY_PASSENGER_ROAD_RE,
+    MOBILITY_PASSENGER_RAIL,
+    MOBILITY_PASSENGER_RAIL_CONV,
+    MOBILITY_PASSENGER_RAIL_RE,
+    MOBILITY_PASSENGER_AIR,
+    MOBILITY_PASSENGER_AIR_CONV,
+    MOBILITY_PASSENGER_AIR_RE,
+    MOBILITY_FREIGHT_ROAD,
+    MOBILITY_FREIGHT_ROAD_CONV,
+    MOBILITY_FREIGHT_ROAD_RE,
+    MOBILITY_FREIGHT_RAIL,
+    MOBILITY_FREIGHT_RAIL_CONV,
+    MOBILITY_FREIGHT_RAIL_RE,
+    MOBILITY_FREIGHT_SHIP,
+    MOBILITY_FREIGHT_SHIP_CONV,
+    MOBILITY_FREIGHT_SHIP_RE
+}
+// Relations de FactTranspot 
+relationship OneToOne {
+	Year to FactTranspot  {year}
+    Country to FactTranspot {country}
+}
+
+
+// Serie temporelle pour l'electricité
+entity TimeSerieLoadPower {
+	value Double required
+    hour Integer required
+}
+// Serie temporelle pour le transport
+entity TimeSerieMobilityPassenger {
+	value Double required
+    hour Integer required
+}
+// Serie temporelle pour la chaleur industrielle
+entity TimeSerieHeatHigh {
+	value Double required
+    hour Integer required
+}
+// Serie temporelle pour l'hydro cours d'eau (fleuve)
+entity TimeSerieHydroRunOfRiver {
+	value Double required
+    hour Integer required
+}
+// Relations de TimeSerie 
+relationship OneToOne {
+    Country to TimeSerieLoadPower {country}
+    Country to TimeSerieMobilityPassenger {country}
+    Country to TimeSerieHeatHigh {country}
+    Country to TimeSerieHydroRunOfRiver {country}
+}
+
+// ======================== Table des Dimensions ========================
+
+// Capacité de production installée 
+entity FactPowerPlants {
+	name String required
+    capacity Double required 
+    status StatusType
+}
+enum StatusType {
+	OPERATIONAL,
+    NO_OPERATIONAL,
+    PLANNED  
+}
+// Relations de FactPowerPlants
+relationship OneToOne {
+	Year to FactPowerPlants  {commissioningDate}
+    Year to FactPowerPlants  {decommissioningDate}
+    Country to FactPowerPlants {country}
+    Technology to FactPowerPlants {technology}
+}
+
+// Temps
+entity Year {
+  year Integer required min (1900)
+}
+
+// Pays
+entity Country {
+  code String required maxlength(2)
+  name String required maxlength(255)
+}
+
+// Technologies
+entity Technology {
+  name String required maxlength(255)
+  category CategoryType required 
+}
+enum CategoryType {
+	THERMAL,
+    RENEWABLE
+}
+// Carburant
+entity Fuel {
+  name String required maxlength(255)
+}
